@@ -97,5 +97,7 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          # Deploy staging branch to production environment (live staging)
-          npx vercel --token "$VERCEL_TOKEN" --confirm --prod --org "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID"
+          # Pull project settings and deploy to production environment (live staging)
+          npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel build --prod --token="$VERCEL_TOKEN"
+          npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
