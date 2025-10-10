@@ -88,6 +88,12 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Install NPM Dependencies for deployment
+        run: npm ci
+
+      - name: Build Assets for deployment
+        run: npm run build
+
       - name: Install Vercel CLI
         run: npm install -g vercel@28
 
