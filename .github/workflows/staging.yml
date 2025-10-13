@@ -95,7 +95,7 @@ jobs:
         run: npm run build
 
       - name: Install Vercel CLI
-        run: npm install -g vercel@28
+        run: npm install -g vercel
 
       - name: Deploy to Vercel (staging live)
         env:
