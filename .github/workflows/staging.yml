@@ -29,9 +29,6 @@ jobs:
       - name: Copy .env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Generate key
-        run: php artisan key:generate
-
       - name: Directory Permissions (safer)
         run: chmod -R u+w,g+w storage bootstrap/cache
 
@@ -79,6 +76,9 @@ jobs:
     needs: tests
     runs-on: ubuntu-latest
     if: needs.tests.result == 'success'
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - uses: actions/checkout@v4
@@ -88,35 +88,14 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install NPM Dependencies for deployment
-        run: npm ci
-
-      - name: Build Assets for deployment
-        run: npm run build
-
       - name: Install Vercel CLI
-        run: npm install -g vercel
+        run: npm install -g vercel@latest
 
-      - name: Deploy to Vercel (staging live)
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          # Pull project settings and download production env (do not build here)
-          npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-          # Verify APP_KEY exists in the pulled production env to avoid runtime warning
-          if [ ! -f .vercel/.env.production.local ]; then
-            echo "::error::Missing .vercel/.env.production.local after vercel pull; ensure project env variables are configured in Vercel."
-            exit 1
-          fi
+      - name: Build Project Artifacts with Vercel
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-          if ! grep -q '^APP_KEY=' .vercel/.env.production.local; then
-            echo "::error::APP_KEY is not set in Vercel production env. Add APP_KEY to Vercel project settings to avoid runtime errors."
-            echo "You can generate one locally with: php artisan key:generate --show"
-            exit 1
-          fi
-
-          # Let Vercel perform the build on their platform (avoid native PHP builder issues on GH runners)
-          npx vercel deploy --prod --token="$VERCEL_TOKEN" --confirm
+      - name: Deploy Pre-built Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
