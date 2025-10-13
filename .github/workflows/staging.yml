@@ -103,7 +103,20 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          # Pull project settings and deploy to production environment (live staging)
+          # Pull project settings and download production env (do not build here)
           npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
-          npx vercel build --prod --token="$VERCEL_TOKEN"
-          npx vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"
+
+          # Verify APP_KEY exists in the pulled production env to avoid runtime warning
+          if [ ! -f .vercel/.env.production.local ]; then
+            echo "::error::Missing .vercel/.env.production.local after vercel pull; ensure project env variables are configured in Vercel."
+            exit 1
+          fi
+
+          if ! grep -q '^APP_KEY=' .vercel/.env.production.local; then
+            echo "::error::APP_KEY is not set in Vercel production env. Add APP_KEY to Vercel project settings to avoid runtime errors."
+            echo "You can generate one locally with: php artisan key:generate --show"
+            exit 1
+          fi
+
+          # Let Vercel perform the build on their platform (avoid native PHP builder issues on GH runners)
+          npx vercel deploy --prod --token="$VERCEL_TOKEN" --confirm
