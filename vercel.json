@@ -18,6 +18,10 @@
     ],
     "routes": [
         {
+            "src": "/build/manifest.json",
+            "dest": "/public/build/manifest.json"
+        },
+        {
             "src": "/build/assets/(.*)",
             "dest": "/public/build/assets/$1"
         },
@@ -27,6 +31,14 @@
                 "Content-Type": "image/x-icon"
             },
             "dest": "/public/favicon.ico"
+        },
+        {
+            "src": "/robots.txt",
+            "dest": "/public/robots.txt"
+        },
+        {
+            "src": "/(.*\\.(css|js|jpg|jpeg|png|gif|svg|ico|woff|woff2|ttf|eot))",
+            "dest": "/public/$1"
         },
         {
             "src": "/(.*)",
@@ -39,6 +51,7 @@
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://emerging-trends-test.vercel.app",
+        "ASSET_URL": "https://emerging-trends-test.vercel.app",
 
         "LOG_CHANNEL": "stderr",
         "CACHE_DRIVER": "array",
