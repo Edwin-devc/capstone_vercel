@@ -67,12 +67,8 @@ jobs:
       - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
         env:
           DB_CONNECTION: pgsql
-          DB_HOST: ${{ secrets.SDB_HOST }}
           DB_PORT: ${{ secrets.SDB_PORT }}
-          DB_DATABASE: ${{ secrets.SDB_DATABASE }}
-          DB_USERNAME: ${{ secrets.SDB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.SDB_PASSWORD }}
-          DB_SSLMODE: require
+          DATABASE_URL: ${{ secrets.SDATABASE_URL }}
         run: php artisan test
 
       - name: PHP Quality Code Check
