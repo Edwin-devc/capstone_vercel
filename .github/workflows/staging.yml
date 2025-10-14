@@ -35,12 +35,15 @@ jobs:
       - name: Directory Permissions (safer)
         run: chmod -R u+w,g+w storage bootstrap/cache
 
-      - name: Create Database
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
-
       - name: Run migrations
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: ${{ secrets.SDB_HOST }}
+          DB_PORT: ${{ secrets.SDB_PORT }}
+          DB_DATABASE: ${{ secrets.SDB_DATABASE }}
+          DB_USERNAME: ${{ secrets.SDB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.SDB_PASSWORD }}
+          DB_SSLMODE: require
         run: php artisan migrate --force
 
       - name: Setup Node.js
@@ -63,8 +66,13 @@ jobs:
 
       - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: database/database.sqlite
+          DB_CONNECTION: pgsql
+          DB_HOST: ${{ secrets.SDB_HOST }}
+          DB_PORT: ${{ secrets.SDB_PORT }}
+          DB_DATABASE: ${{ secrets.SDB_DATABASE }}
+          DB_USERNAME: ${{ secrets.SDB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.SDB_PASSWORD }}
+          DB_SSLMODE: require
         run: php artisan test
 
       - name: PHP Quality Code Check
