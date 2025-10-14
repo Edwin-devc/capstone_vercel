@@ -1,6 +1,7 @@
 {
     "version": 2,
     "framework": null,
+    "buildCommand": "npm run build",
     "builds": [
         {
             "src": "/api/index.php",
@@ -34,7 +35,7 @@
     ],
     "outputDirectory": "public",
     "env": {
-        "APP_NAME": "Funny",
+        "APP_NAME": "Emerging Trends",
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://emerging-trends-test.vercel.app",
