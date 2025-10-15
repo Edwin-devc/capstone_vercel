@@ -50,8 +50,8 @@
         "APP_NAME": "Emerging Trends",
         "APP_ENV": "production",
         "APP_DEBUG": "true",
-        "APP_URL": "https://capstone-vercel-ten.vercel.app",
-        "ASSET_URL": "https://capstone-vercel-ten.vercel.app",
+        "APP_URL": "https://emerging-trends-staging.vercel.app",
+        "ASSET_URL": "https://emerging-trends-staging.vercel.app",
 
         "LOG_CHANNEL": "stderr",
         "CACHE_DRIVER": "array",
